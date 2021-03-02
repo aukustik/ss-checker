@@ -52,10 +52,8 @@ class MsChecker:
             else:
                 minion.homefs = 'Unmounted'
 
-            minion.os = '{} {}'.format(
-                os_dict[minion.minion_id]['os'],
-                os_release_dict[minion.minion_id]['osrelease']
-            )
+            minion.os = os_dict[minion.minion_id]['os']
+            minion.os_release = os_release_dict[minion.minion_id]['osrelease']
 
             for gpu in grains_full_dict[minion.minion_id]['gpus']:
                 minion.gpus += '\n\t\tVendor: {}\n'.format(gpu['vendor'])
@@ -75,6 +73,7 @@ class Minion:
         self.homefs = None
         self.cpu_id = None
         self.os = None
+        self.os_release = '9.9.9'
         self.gpus = ''
 
     def get_info(self):
@@ -83,8 +82,11 @@ class Minion:
         result += '\t/home mountpoint filesystem: {}\n'.format(
             self.check_home_mp())
         result += '\tCPU Model: {}\n'.format(self.cpu_id)
-        result += '\tOS Release: {}\n'.format(self.os)
+        result += '\tOS Release: {} {}\n'.format(
+            self.os,
+            self.os_release)
         result += '\tGPUs:{}\n'.format(self.gpus)
+        result += self.check_release()
 
         return result
 
@@ -92,9 +94,23 @@ class Minion:
         if (self.homefs == 'ext4'):
             self.homefs += ' (SUCCESS)'
         else:
-            self.homefs += ' (FAIL)'
+            self.homefs += ' (FAIL) must be "ext4"'
 
         return self.homefs
+
+    def check_release(self):
+        info = ''
+        release_list = self.os_release.split('.')
+        if int(release_list[0]) < 7 or int(release_list[0]) > 7:
+            info += '\tWrong OS Version\nPlease, install CentOS 7.'
+            return info
+        
+        if int(release_list[1]) <= 4:
+            info += '\tOS supports Intel QuickSync.\n'
+        else:
+            info += '\n\tOS not supports Intel QuickSync.\n'
+            info += '\tYou need CentOS 7.4 or lower.\n'
+        return info
 
 ms_checker = MsChecker()
 ms_checker.run()
