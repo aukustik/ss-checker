@@ -81,8 +81,7 @@ class Minion:
         result = ''
         result += 'minion_id: "{}"\n'.format(self.minion_id)
         result += '\t/home mountpoint filesystem: {}\n'.format(
-            self.check_home_mp()
-            )
+            self.check_home_mp())
         result += '\tCPU Model: {}\n'.format(self.cpu_id)
         result += '\tOS Release: {}\n'.format(self.os)
         result += '\tGPUs:{}\n'.format(self.gpus)
