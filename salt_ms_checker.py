@@ -1,4 +1,6 @@
+#!/usr/bin/python3
 from salt import client
+
 
 class MsChecker:
 
@@ -6,17 +8,21 @@ class MsChecker:
 
         local_salt = client.LocalClient()
 
-        temp = local_salt.cmd( '*', 'test.ping', timeout=5)
+        temp = local_salt.cmd('*', 'test.ping', timeout=5)
         available_minions = []
 
         for minion in temp.keys():
             if temp[minion]:
                 available_minions.append(Minion(minion))
 
-        self.get_info(available_minions, local_salt)
+        if available_minions:
+            self.get_info(available_minions, local_salt)
+
+            for minion in available_minions:
+                print(minion.get_info())
         
-        for minion in available_minions:
-            print(minion.get_info())
+        else:
+            print('No available minions')
 
     def get_info(self, available_minions, local_salt):
 
@@ -50,7 +56,7 @@ class MsChecker:
                 os_dict[minion.minion_id]['os'],
                 os_release_dict[minion.minion_id]['osrelease']
             )
-            
+
             for gpu in grains_full_dict[minion.minion_id]['gpus']:
                 minion.gpus += '\n\t\tVendor: {}\n'.format(gpu['vendor'])
                 minion.gpus += '\t\tModel: {}\n'.format(gpu['model'])
@@ -60,6 +66,7 @@ class MsChecker:
         for minion in available_minions:
             minions_ids.append(minion.minion_id)
         return minions_ids
+
 
 class Minion:
 
@@ -73,11 +80,13 @@ class Minion:
     def get_info(self):
         result = ''
         result += 'minion_id: "{}"\n'.format(self.minion_id)
-        result += '\t/home mountpoint filesystem: {}\n'.format(self.check_home_mp())
+        result += '\t/home mountpoint filesystem: {}\n'.format(
+            self.check_home_mp()
+            )
         result += '\tCPU Model: {}\n'.format(self.cpu_id)
         result += '\tOS Release: {}\n'.format(self.os)
         result += '\tGPUs:{}\n'.format(self.gpus)
-        
+
         return result
 
     def check_home_mp(self):
@@ -85,7 +94,7 @@ class Minion:
             self.homefs += ' (SUCCESS)'
         else:
             self.homefs += ' (FAIL)'
-        
+
         return self.homefs
 
 ms_checker = MsChecker()
