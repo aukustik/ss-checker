@@ -48,6 +48,7 @@ class Minion:
             self.cpu.result,
             self.cpu.report
         )
+        result += '\n\n {}'.format(self.grains)
         # result += '\tGPUs:{}\n'.format(self.gpus)
         # result += self.check_release()
 
