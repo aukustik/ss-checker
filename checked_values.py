@@ -6,6 +6,9 @@ class CheckedValue:
     def check(self):
         raise NotImplementedError
 
+    def get_report(self):
+        raise NotImplementedError
+
 
 class ContentMountpoint(CheckedValue):
     
@@ -48,6 +51,14 @@ class ContentMountpoint(CheckedValue):
         else:
             self.result = False
             return self.result
+    
+    def get_report(self):
+        report = ''
+        report += '\n\tContent mountpoint is "{}" with filesystem {}'.format(
+            self.mountpoint,
+            self.filesystem
+        )
+        return report
 
 class OsRelease(CheckedValue):
     
@@ -62,24 +73,32 @@ class OsRelease(CheckedValue):
 
         if self.distrib != 'CentOS':
             self.result = False
-            self.report += '\n\t\tUnsupported Linux distrib.\n'
+            self.report += '\n\t\t\tUnsupported Linux distrib.\n'
             return self.result
         
         release_list = self.release.split('.')
         if release_list[0] != '7':
             self.result = False
-            self.report += '\n\t\tUnsupported CentOS Verison\n'
+            self.report += '\n\t\t\tUnsupported CentOS Verison\n'
             return self.result
         
         elif int(release_list[1]) > 4:
             self.result = True
-            self.report += '\n\t\tIntelGPU unsupported for this os release.\n'
+            self.report += '\n\t\t\tIntelGPU unsupported for this os release.\n'
             return self.result
         
         else:
             self.result = True
             return self.result
 
+    def get_report(self):
+        report = '\n\n\tOS:\n'
+        report += '\t\t{} {}'.format(
+            self.distrib,
+            self.release
+        )
+        report += '\n\t\tReport: {}'.format(self.report)
+        return report
 
 class RamTotal(CheckedValue):
     def __init__(self, grains):
@@ -98,22 +117,37 @@ class RamTotal(CheckedValue):
             self.result = True
             return self.result
     
+    def get_report(self):
+        report = '\n\tRAM total: {}Mb'.format(self.size)
+        report += self.report
+        return report
+    
 class CpuInfo(CheckedValue):
-    def __init__(self, cpu_info):
+    def __init__(self, cpu_info, min_threads):
         self.model = cpu_info['model name']
         self.cores = cpu_info['cpu cores']
         self.threads = cpu_info['siblings']
+        self.min_threads = min_threads
         super(CpuInfo, self).__init__()
     
     def check(self):
-        if int(self.cores) < 4:
+        if int(self.cores) < self.min_threads:
             self.result = False
-            self.report += '\n\t\tThere is not enough CPU cores on the server.\n'
+            self.report += 'There is not enough CPU cores on the server.\n'
             return self.result
         
         else:
             self.result = True
             return self.result
+    
+    def get_report(self):
+        report = '\tCPU:\n\t\tModel: {}'.format(self.model)
+        report += '\n\t\tCores: {}\n\t\tThreads: {}'.format(
+            self.cores,
+            self.threads
+        )
+        report += '\n\t\tReport: {}'.format(self.report)
+        return report
 
 class GpusInfo(CheckedValue):
     def __init__(self, grains):
@@ -122,3 +156,12 @@ class GpusInfo(CheckedValue):
     def check(self):
         self.result = True
         return self.result
+    
+    def get_report(self):
+        report = '\tGPUs:'
+        for gpu in self.gpus_list:
+            report += '\n\t\tVendor: {} Model: {}'.format(
+                gpu['vendor'],
+                gpu['model']
+            )
+        return report

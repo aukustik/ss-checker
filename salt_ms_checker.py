@@ -6,7 +6,12 @@ import sys
 class MsChecker:
 
     def run(self):
-        print(sys.argv)
+        if len(sys.argv) > 1:
+            self.ms_type = sys.argv[-1]
+        else:
+            print('No Args')
+            sys.exit()
+
         local_salt = client.LocalClient()
 
         temp = local_salt.cmd('*', 'test.ping', timeout=5)
@@ -34,8 +39,9 @@ class MsChecker:
         
         for minion in available_minions:
             minion.grains = grains_dict[minion.minion_id]
-            minion.set_content_mountpoint(fstab_dict[minion.minion_id])
-            minion.set_cpu_info(cpu_info_dict[minion.minion_id])
+            minion.fstab = fstab_dict[minion.minion_id]
+            minion.cpu_info = cpu_info_dict[minion.minion_id]
+            minion.set_info_by_ms_type(self.ms_type)
 
 # Формируем список minion_id из созданных объектов
     def get_minions_ids(self, available_minions):

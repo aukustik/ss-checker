@@ -3,61 +3,45 @@ from checked_values import *
 class Minion:
 
     def __init__(self, minion_id):
-        self.info = {
-            'content_mountpoint': None,
-            'os': None,
-            'ram_total': None,
-            'cpu': None
-        }
+        
+        self.info = {}
+        # self.info = {
+        #     'content_mountpoint': None,
+        #     'os': None,
+        #     'ram_total': None,
+        #     'cpu': None
+        # }
         self.minion_id = minion_id
 
         self.cpu_id = ''
         self.grains = None
         self.cpu_info = None
+        self.fstab = None
+
 
     def get_info(self):
-        
-        self.set_os_release(self.grains)
-        self.set_ram_total(self.grains)
-        self.set_cpu(self.cpu_info)
-        self.set_gpus(self.grains)
-
+        report = '"{}":\n'.format(self.minion_id)
         for key in self.info.keys():
             self.info[key].check()
-        
-        result = ''
-        result += '"{}":\n'.format(self.minion_id)
-        # result += '\tCPU Model: {}\n'.format(self.cpu_id)
-        result += '\tOS Release: {} {}\n\t\tSuccess: {} {}\n'.format(
-            self.os.distrib,
-            self.os.release,
-            self.os.result,
-            self.os.report)
-        result += '\tContent mountpoint is "{}" with filesystem: {}\n\t\tSuccess: {}\n\n'.format(
-            self.content_mountpoint.mountpoint,
-            self.content_mountpoint.filesystem,
-            self.content_mountpoint.result)
-        
-        result += '\tRAM total: {}\n\t\tSuccess: {} {}\n'.format(
-            self.ram_total.size,
-            self.ram_total.result,
-            self.ram_total.report
-        )
-        result += '\tCPU model: {} \n\t\tCores: {}\n\t\tThreads: {}\n\t\tSuccess: {} {}\n'.format(
-            self.cpu.model,
-            self.cpu.cores,
-            self.cpu.threads,
-            self.cpu.result,
-            self.cpu.report
-        )
-        result += '\tGPUs:{}\n'.format(self.gpus)
-        for gpu in self.gpus.gpus_list:
-            result += '\t\tVendor: {} Model: {}'.format(
-                gpu['vendor'],
-                gpu['model']
-            )
+            report += self.info[key].get_report()
+        return report
 
-        return result
+    def set_info_by_ms_type(self, ms_type):
+        
+        if ms_type == 'vod':
+            self.info = {
+                'content_mountpoint': ContentMountpoint(self.fstab),
+                'os': OsRelease(self.grains),
+                'gpus': GpusInfo(self.grains)
+            }
+        elif ms_type == 'ms':
+            self.info = {
+                'content_mountpoint': ContentMountpoint(self.fstab),
+                'os': OsRelease(self.grains),
+                'cpu': CpuInfo(self.cpu_info, 4),
+                'ram_total': RamTotal(self.grains)
+            }
+
 
     def set_content_mountpoint(self, fstab):
         self.info['content_mountpoint'] = ContentMountpoint(fstab)
@@ -67,12 +51,9 @@ class Minion:
     
     def set_ram_total(self, grains):
         self.info['ram_total'] = RamTotal(grains)
-    
-    def set_cpu_info(self, cpu_info):
-        self.cpu_info = cpu_info
 
-    def set_cpu(self, grains):
-        self.info['cpu'] = CpuInfo(grains)
+    def set_cpu(self, cpu_info):
+        self.info['cpu'] = CpuInfo(cpu_info, 4)
     
     def set_gpus(self, grains):
         self.info['gpus'] = GpusInfo(grains)
