@@ -39,22 +39,6 @@ class MsChecker:
     #     cpu_dict = local_salt.cmd(
     #         minions_ids, 'grains.item', ['cpu_model'], tgt_type='list')
 
-    #     mp_home_dict = local_salt.cmd(
-    #         minions_ids, 'mount.fstab', tgt_type='list')
-
-    #     grains_full_dict = local_salt.cmd(
-    #         minions_ids, 'grains.items', tgt_type='list')
-
-    #     for minion in available_minions:
-
-    #         minion.cpu_id = cpu_dict[minion.minion_id]['cpu_model']
-
-    #         minion.os = os_dict[minion.minion_id]['os']
-    #         minion.os_release = os_release_dict[minion.minion_id]['osrelease']
-    #         print(grains_full_dict)
-    #         for gpu in grains_full_dict[minion.minion_id]['gpus']:
-    #             minion.gpus += '\n\t\tVendor: {}\n'.format(gpu['vendor'])  
-    #             minion.gpus += '\t\tModel: {}\n'.format(gpu['model'])
 
 # Формируем список minion_id из созданных объектов
     def get_minions_ids(self, available_minions):

@@ -62,18 +62,18 @@ class OsRelease(CheckedValue):
         # и репортим об ошибке. Повторям для всех условий.
         if self.distrib != 'CentOS':
             self.result = False
-            self.report += '\n\tUnsupported Linux distrib.\n'
+            self.report += '\n\t\tUnsupported Linux distrib.\n'
             return self.result
         
         release_list = self.release.split('.')
         if release_list[0] != '7':
             self.result = False
-            self.report += '\n\tUnsupported CentOS Verison\n'
+            self.report += '\n\t\tUnsupported CentOS Verison\n'
             return self.result
         
         elif int(release_list[1]) > 4:
             self.result = True
-            self.report += '\n\tIntelGPU unsupported for this os release.\n'
+            self.report += '\n\t\tIntelGPU unsupported for this os release.\n'
             return self.result
         
         else:
@@ -89,10 +89,25 @@ class RamTotal(CheckedValue):
     def check(self):
         if int(self.size) < 15000:
             self.result = False
-            self.report += '\n\tThere is not enough RAM on the server.\n'
+            self.report += '\n\t\tThere is not enough RAM on the server.\n'
             return self.result
         
         else:
             self.result = True
             return self.result
     
+class CpuInfo(CheckedValue):
+    def __init__(self, grains):
+        self.model = grains['cpu_model']
+        self.cores = grains['num_cpus']
+        super(CpuInfo, self).__init__()
+    
+    def check(self):
+        if int(self.cores) < 4:
+            self.result = False
+            self.report += '\n\t\tThere is not enough CPU cores on the server.\n'
+            return self.result
+        
+        else:
+            self.result = True
+            return self.result

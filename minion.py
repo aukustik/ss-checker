@@ -6,7 +6,8 @@ class Minion:
         self.info = {
             'content_mountpoint': None,
             'os': None,
-            'ram_total': None
+            'ram_total': None,
+            'cpu': None
         }
         self.minion_id = minion_id
 
@@ -18,6 +19,7 @@ class Minion:
         
         self.set_os_release(self.grains)
         self.set_ram_total(self.grains)
+        self.set_cpu(self.grains)
 
         for key in self.info.keys():
             self.info[key].check()
@@ -35,10 +37,16 @@ class Minion:
             self.content_mountpoint.filesystem,
             self.content_mountpoint.result)
         
-        result += '\tRAM total:{} {} {}'.format(
+        result += '\tRAM total: {} {} {}'.format(
             self.ram_total.size,
             self.ram_total.result,
             self.ram_total.report
+        )
+        result += '\tCPU model: {} \n\t\tCores: {} {} {}'.format(
+            self.cpu.model,
+            self.cpu.cores,
+            self.cpu.result,
+            self.cpu.report
         )
         # result += '\tGPUs:{}\n'.format(self.gpus)
         # result += self.check_release()
@@ -54,6 +62,9 @@ class Minion:
     def set_ram_total(self, grains):
         self.info['ram_total'] = RamTotal(grains)
     
+    def set_cpu(self, grains):
+        self.info['cpu'] = CpuInfo(grains)
+    
     @property
     def content_mountpoint(self):
         return self.info['content_mountpoint']
@@ -65,3 +76,7 @@ class Minion:
     @property
     def ram_total(self):
         return self.info['ram_total']
+    
+    @property
+    def cpu(self):
+        return self.info['cpu']
