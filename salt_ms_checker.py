@@ -51,6 +51,7 @@ class MsChecker:
         return minions_ids
 
 
-ms_checker = MsChecker()
-ms_checker.run()
+if __name__ == '__main__':
+    ms_checker = MsChecker()
+    ms_checker.run()
 
