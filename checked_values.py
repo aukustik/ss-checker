@@ -1,7 +1,6 @@
 class CheckedValue:
     def __init__(self):
         self.result = False
-        self.hidden = False
         self.report = ''
     
     def check(self):
@@ -24,7 +23,7 @@ class ContentMountpoint(CheckedValue):
             return mountpoint
         
         elif '/home/telebreeze/' in self.fstab.keys():
-            mountpoint = '/home/telebreeze/'
+            mountpoint = '/home/telebreeze'
             return mountpoint
 
         elif '/home' in self.fstab.keys():
@@ -56,10 +55,11 @@ class OsRelease(CheckedValue):
         self.distrib = grains['os']
         self.release = grains['osrelease']
         super(OsRelease, self).__init__()
-    
+
+# Проверяем название Дистрибутива. Если не ок - заканчиваем проверку
+# и репортим об ошибке. Повторям для всех условий.   
     def check(self):
-        # Проверяем название Дистрибутива. Если не ок - заканчиваем проверку
-        # и репортим об ошибке. Повторям для всех условий.
+
         if self.distrib != 'CentOS':
             self.result = False
             self.report += '\n\t\tUnsupported Linux distrib.\n'
@@ -85,7 +85,9 @@ class RamTotal(CheckedValue):
     def __init__(self, grains):
         self.size = grains['mem_total']
         super(RamTotal, self).__init__()
-    
+
+# Проверяем общее количество RAM.
+# Проверку выставил временную.
     def check(self):
         if int(self.size) < 15000:
             self.result = False
@@ -97,9 +99,10 @@ class RamTotal(CheckedValue):
             return self.result
     
 class CpuInfo(CheckedValue):
-    def __init__(self, grains):
-        self.model = grains['cpu_model']
-        self.cores = grains['num_cpus']
+    def __init__(self, cpu_info):
+        self.model = cpu_info['model name']
+        self.cores = cpu_info['cpu cores']
+        self.threads = cpu_info['siblings']
         super(CpuInfo, self).__init__()
     
     def check(self):
@@ -111,3 +114,11 @@ class CpuInfo(CheckedValue):
         else:
             self.result = True
             return self.result
+
+class GpusInfo(CheckedValue):
+    def __init__(self, grains):
+        self.gpus_list = grains['gpus']
+        
+    def check(self):
+        self.result = True
+        return self.result

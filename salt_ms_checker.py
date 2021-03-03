@@ -1,12 +1,12 @@
 #!/usr/bin/python3
 from salt import client
 from minion import Minion
-
+import sys
 
 class MsChecker:
 
     def run(self):
-
+        print(sys.argv)
         local_salt = client.LocalClient()
 
         temp = local_salt.cmd('*', 'test.ping', timeout=5)
@@ -35,12 +35,7 @@ class MsChecker:
         for minion in available_minions:
             minion.grains = grains_dict[minion.minion_id]
             minion.set_content_mountpoint(fstab_dict[minion.minion_id])
-            minion.cpu_info = cpu_info_dict[minion.minion_id]
-
-
-    #     cpu_dict = local_salt.cmd(
-    #         minions_ids, 'grains.item', ['cpu_model'], tgt_type='list')
-
+            minion.set_cpu_info(cpu_info_dict[minion.minion_id])
 
 # Формируем список minion_id из созданных объектов
     def get_minions_ids(self, available_minions):
@@ -52,3 +47,4 @@ class MsChecker:
 
 ms_checker = MsChecker()
 ms_checker.run()
+
