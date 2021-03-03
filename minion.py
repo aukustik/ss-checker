@@ -32,17 +32,17 @@ class Minion:
             self.os.release,
             self.os.result,
             self.os.report)
-        result += '\tContent mountpoint is "{}" with filesystem: {} {}\n'.format(
+        result += '\tContent mountpoint is "{}" with filesystem: {} {}\n\n'.format(
             self.content_mountpoint.mountpoint,
             self.content_mountpoint.filesystem,
             self.content_mountpoint.result)
         
-        result += '\tRAM total: {} {} {}'.format(
+        result += '\tRAM total: {} {} {}\n'.format(
             self.ram_total.size,
             self.ram_total.result,
             self.ram_total.report
         )
-        result += '\tCPU model: {} \n\t\tCores: {} {} {}'.format(
+        result += '\tCPU model: {} \n\t\tCores: {} {} {}\n'.format(
             self.cpu.model,
             self.cpu.cores,
             self.cpu.result,
