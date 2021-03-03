@@ -14,6 +14,7 @@ class Minion:
         self.cpu_id = ''
         self.gpus = ''
         self.grains = None
+        self.cpu_info = None
 
     def get_info(self):
         
@@ -48,7 +49,7 @@ class Minion:
             self.cpu.result,
             self.cpu.report
         )
-        result += '\n\n {}'.format(self.grains)
+        result += '\n\n {}'.format(self.cpu_info)
         # result += '\tGPUs:{}\n'.format(self.gpus)
         # result += self.check_release()
 

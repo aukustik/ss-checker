@@ -30,10 +30,12 @@ class MsChecker:
         minions_ids = self.get_minions_ids(available_minions)
         grains_dict = local_salt.cmd(minions_ids, 'grains.items',tgt_type='list')
         fstab_dict = local_salt.cmd(minions_ids, 'mount.fstab',tgt_type='list')
+        cpu_info_dict = local_salt.cmd(minions_ids, 'status.cpuinfo',tgt_type='list')
         
         for minion in available_minions:
             minion.grains = grains_dict[minion.minion_id]
             minion.set_content_mountpoint(fstab_dict[minion.minion_id])
+            minion.cpu_info = cpu_info_dict[minion.minion_id]
 
 
     #     cpu_dict = local_salt.cmd(
