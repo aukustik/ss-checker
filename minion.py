@@ -35,6 +35,13 @@ class Minion:
                 'cpu': CpuInfo(self.cpu_info, 4),
                 'ram_total': RamTotal(self.grains)
             }
+        elif ms_type == 'coder':
+            self.info = {
+                'os': OsRelease(self.grains),
+                'cpu': CpuInfo(self.cpu_info, 4),
+                'ram_total': RamTotal(self.grains),
+                'gpus': GpusInfo(self.grains)
+            }
 
     
     @property

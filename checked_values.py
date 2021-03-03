@@ -22,20 +22,16 @@ class ContentMountpoint(CheckedValue):
     def get_content_mountpoint(self): 
         
         if '/home/telebreeze/media' in self.fstab.keys():
-            mountpoint = '/home/telebreeze/media'
-            return mountpoint
-        
+            return '/home/telebreeze/media'
+             
         elif '/home/telebreeze/' in self.fstab.keys():
-            mountpoint = '/home/telebreeze'
-            return mountpoint
+            return '/home/telebreeze'
 
         elif '/home' in self.fstab.keys():
-            mountpoint = '/home'
-            return mountpoint
+            return '/home'
         
         else:
-            mountpoint = '/'
-            return mountpoint
+            return '/'
 
 # Проверяем FS у маунтпоинта с контентом.
     def get_mountpoint_filesystem(self):
@@ -59,6 +55,7 @@ class ContentMountpoint(CheckedValue):
             self.filesystem
         )
         return report
+
 
 class OsRelease(CheckedValue):
     
