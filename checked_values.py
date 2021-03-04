@@ -50,7 +50,7 @@ class ContentMountpoint(CheckedValue):
     
     def get_report(self):
         report = ''
-        report += '\n\tContent mountpoint is "{}" with filesystem {}'.format(
+        report += '\n\t- Content mountpoint is "{}" with filesystem {}\n'.format(
             self.mountpoint,
             self.filesystem
         )
@@ -89,12 +89,12 @@ class OsRelease(CheckedValue):
             return self.result
 
     def get_report(self):
-        report = '\n\n\tOS:\n'
-        report += '\t\t{} {}'.format(
+        report = '\n\n\t- OS:\n'
+        report += '\t\t- {} {}'.format(
             self.distrib,
             self.release
         )
-        report += '\n\t\tReport: {}'.format(self.report)
+        report += '\n\t\t- Report: {}'.format(self.report)
         return report
 
 class RamTotal(CheckedValue):
@@ -115,7 +115,7 @@ class RamTotal(CheckedValue):
             return self.result
     
     def get_report(self):
-        report = '\n\tRAM total: {}Mb'.format(self.size)
+        report = '\n\t- RAM total: {}Mb'.format(self.size)
         report += self.report
         return report
     
@@ -138,12 +138,12 @@ class CpuInfo(CheckedValue):
             return self.result
     
     def get_report(self):
-        report = '\tCPU:\n\t\tModel: {}'.format(self.model)
-        report += '\n\t\tCores: {}\n\t\tThreads: {}'.format(
+        report = '\t- CPU:\n\t\t- Model: {}'.format(self.model)
+        report += '\n\t\t- Cores: {}\n\t\t- Threads: {}'.format(
             self.cores,
             self.threads
         )
-        report += '\n\t\tReport: {}'.format(self.report)
+        report += '\n\t\t- Report: {}'.format(self.report)
         return report
 
 class GpusInfo(CheckedValue):
@@ -155,9 +155,9 @@ class GpusInfo(CheckedValue):
         return self.result
     
     def get_report(self):
-        report = '\tGPUs:'
+        report = '\t- GPUs:'
         for gpu in self.gpus_list:
-            report += '\n\t\tVendor: {} Model: {}'.format(
+            report += '\n\t\t- Vendor: {} Model: {}'.format(
                 gpu['vendor'],
                 gpu['model']
             )
