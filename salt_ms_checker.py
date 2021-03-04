@@ -4,13 +4,11 @@ from minion import Minion
 import sys
 
 class MsChecker:
+    def __init__(self):
+        self.ms_type = ''
+        self.input_file = ''
 
     def run(self, minions):
-        if len(sys.argv) > 1:
-            self.ms_type = sys.argv[-1]
-        else:
-            print('No Args')
-            sys.exit()
 
         local_salt = client.LocalClient()
 
@@ -53,12 +51,28 @@ class MsChecker:
 
     def get_minions_from_file(self, filename):
         minions_input_file = open(filename,'r')
-        minions = minions_input_file.read().splitlines()
+        lanes = minions_input_file.read().splitlines()
         minions_input_file.close()
+        minions = []
+        for lane in lanes:
+            if not lane.startswith('#'):
+                minions.append(lane)
+        
         return minions
 
 if __name__ == '__main__':
     ms_checker = MsChecker()
-    print(ms_checker.get_minions_from_file('input.txt'))
-    ms_checker.run(ms_checker.get_minions_from_file('input.txt'))
+    if '-h' in sys.argv:
+        print('Help:\n Sample:\
+            \n  ./salt_ms_checker.py input_file.txt ms_type')
+        sys.exit()
+    if len(sys.argv) > 2:
+        ms_checker.ms_type = sys.argv[-1]
+        ms_checker.input_file = sys.argv[-2]
+    else:
+        print('Not Enough Args')
+        sys.exit()
+
+    print(ms_checker.get_minions_from_file(ms_checker.input_file))
+    ms_checker.run(ms_checker.get_minions_from_file(ms_checker.input_file))
 
