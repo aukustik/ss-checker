@@ -36,8 +36,8 @@ class ContentMountpoint(CheckedValue):
 # Проверяем FS у маунтпоинта с контентом.
     def get_mountpoint_filesystem(self):
         
-        filesystem = self.fstab[self.mountpoint]['fstype']
-        return filesystem
+        _filesystem = self.fstab[self.mountpoint]['fstype']
+        return _filesystem
 
     def check(self):
 
@@ -49,12 +49,12 @@ class ContentMountpoint(CheckedValue):
             return self.result
     
     def get_report(self):
-        report = ''
-        report += '\n\t- Content mountpoint is "{}" with filesystem {}\n'.format(
+        _report = ''
+        _report += '\n\t- Content mountpoint is "{}" with filesystem {}\n'.format(
             self.mountpoint,
             self.filesystem
         )
-        return report
+        return _report
 
 
 class OsRelease(CheckedValue):
@@ -73,13 +73,13 @@ class OsRelease(CheckedValue):
             self.report += '\n\t\t\tUnsupported Linux distrib.\n'
             return self.result
         
-        release_list = self.release.split('.')
-        if release_list[0] != '7':
+        _release_list = self.release.split('.')
+        if _release_list[0] != '7':
             self.result = False
             self.report += '\n\t\t\tUnsupported CentOS Verison\n'
             return self.result
         
-        elif int(release_list[1]) > 4:
+        elif int(_release_list[1]) > 4:
             self.result = True
             self.report += '\n\t\t\tIntelGPU unsupported for this os release.\n'
             return self.result
@@ -89,13 +89,13 @@ class OsRelease(CheckedValue):
             return self.result
 
     def get_report(self):
-        report = '\n\n\t- OS:\n'
-        report += '\t\t- {} {}'.format(
+        _report = '\n\n\t- OS:\n'
+        _report += '\t\t- {} {}'.format(
             self.distrib,
             self.release
         )
-        report += '\n\t\t- Report: {}'.format(self.report)
-        return report
+        _report += '\n\t\t- Report: {}'.format(self.report)
+        return _report
 
 class RamTotal(CheckedValue):
     def __init__(self, grains):
@@ -115,9 +115,9 @@ class RamTotal(CheckedValue):
             return self.result
     
     def get_report(self):
-        report = '\n\t- RAM total: {}Mb'.format(self.size)
-        report += self.report
-        return report
+        _report = '\n\t- RAM total: {}Mb'.format(self.size)
+        _report += self.report
+        return _report
     
 class CpuInfo(CheckedValue):
     def __init__(self, cpu_info, min_threads):
@@ -138,13 +138,13 @@ class CpuInfo(CheckedValue):
             return self.result
     
     def get_report(self):
-        report = '\t- CPU:\n\t\t- Model: {}'.format(self.model)
-        report += '\n\t\t- Cores: {}\n\t\t- Threads: {}'.format(
+        _report = '\t- CPU:\n\t\t- Model: {}'.format(self.model)
+        _report += '\n\t\t- Cores: {}\n\t\t- Threads: {}'.format(
             self.cores,
             self.threads
         )
-        report += '\n\t\t- Report: {}'.format(self.report)
-        return report
+        _report += '\n\t\t- Report: {}'.format(self.report)
+        return _report
 
 class GpusInfo(CheckedValue):
     def __init__(self, grains):
@@ -155,10 +155,10 @@ class GpusInfo(CheckedValue):
         return self.result
     
     def get_report(self):
-        report = '\t- GPUs:'
+        _report = '\t- GPUs:'
         for gpu in self.gpus_list:
-            report += '\n\t\t- Vendor: {} Model: {}'.format(
+            _report += '\n\t\t- Vendor: {} Model: {}'.format(
                 gpu['vendor'],
                 gpu['model']
             )
-        return report
+        return _report

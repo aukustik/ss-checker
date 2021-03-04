@@ -12,12 +12,12 @@ class Minion:
         self.results = {}
 
     def get_info(self):
-        report = '\n"{}":\n'.format(self.minion_id)
+        _report = '"{}":\n'.format(self.minion_id)
         for key in self.info.keys():
             self.results[key] = self.info[key].check()
             if not self.results[key]:
-                report += self.info[key].get_report()
-        return report
+                _report += self.info[key].get_report()
+        return _report
     
     def get_results(self):
         return self.results
