@@ -17,6 +17,8 @@ class Minion:
             self.results[key] = self.info[key].check()
             if not self.results[key]:
                 _report += self.info[key].get_report()
+            if self.results[key]: # для дебага
+                _report += self.info[key].get_report()
         return _report
     
     def get_results(self):

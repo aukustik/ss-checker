@@ -1,2 +1,4 @@
 __pycache__/
 issues_report.txt
+.vscode/launch.json
+.vscode/

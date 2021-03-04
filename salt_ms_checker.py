@@ -53,6 +53,7 @@ class MsChecker:
             _minions_ids.append(minion.minion_id)
         return _minions_ids
 
+# Получаем список миньонов из файла
     def get_minions_from_file(self, filename):
         _minions_input_file = open(filename,'r')
         _lanes = _minions_input_file.read().splitlines()
@@ -64,6 +65,7 @@ class MsChecker:
         
         return _minions
 
+# Выводим Отчет в файл
     def write_to_report_file(self, report):
         _report = open("issues_report.txt", "w")
         _report.write(report)
