@@ -10,6 +10,7 @@ class Minion:
         self.cpu_info = None
         self.fstab = None
         self.results = {}
+        self.disk_usage = {}
 
     def get_info(self):
         _report = '"{}":\n'.format(self.minion_id)
@@ -36,11 +37,12 @@ class Minion:
             self.info = {
                 'content_mountpoint': ContentMountpoint(self.fstab),
                 'os': OsRelease(self.grains),
-                'cpu': CpuInfo(self.cpu_info, 4),
+                'cpu': CpuInfo(self.cpu_info, 1),
                 'ram_total': RamTotal(self.grains)
             }
         elif ms_type == 'coder':
             self.info = {
+                'disks': DiskUsage(self.disk_usage, self.fstab),
                 'content_mountpoint': ContentMountpoint(self.fstab),
                 'os': OsRelease(self.grains),
                 'cpu': CpuInfo(self.cpu_info, 4),

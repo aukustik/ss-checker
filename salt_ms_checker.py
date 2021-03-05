@@ -25,7 +25,7 @@ class MsChecker:
             _report = ''
             for minion in _available_minions:
                 _report += minion.get_info()
-                _report += str(minion.get_results())
+                # _report += str(minion.get_results())
                 _report += '\n\n'
             print(_report)
             self.write_to_report_file(_report)
@@ -39,10 +39,12 @@ class MsChecker:
         _grains_dict = local_salt.cmd(_minions_ids, 'grains.items', tgt_type='list')
         _fstab_dict = local_salt.cmd(_minions_ids, 'mount.fstab', tgt_type='list')
         _cpu_info_dict = local_salt.cmd(_minions_ids, 'status.cpuinfo', tgt_type='list')
+        _disk_usage = local_salt.cmd(_minions_ids, 'disk.usage', tgt_type='list')
         
         for minion in available_minions:
             minion.grains = _grains_dict[minion.minion_id]
             minion.fstab = _fstab_dict[minion.minion_id]
+            minion.disk_usage = _disk_usage[minion.minion_id]
             minion.cpu_info = _cpu_info_dict[minion.minion_id]
             minion.set_info_by_ms_type(self.ms_type)
 

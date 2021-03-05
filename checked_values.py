@@ -115,9 +115,15 @@ class RamTotal(CheckedValue):
             return self.result
     
     def get_report(self):
-        _report = '\n\t- RAM total: {}Mb'.format(self.size)
+        _report = '\n\t- RAM total: {} GB'.format(self.ram_mb_to_gb(self.size))
         _report += self.report
         return _report
+    
+    def ram_mb_to_gb(self, size_mb):
+        _size_gb = float(size_mb) / 1024
+        _size_gb = float('{0:.3f}'.format(_size_gb))
+        return _size_gb
+
     
 class CpuInfo(CheckedValue):
     def __init__(self, cpu_info, min_threads):
@@ -138,12 +144,13 @@ class CpuInfo(CheckedValue):
             return self.result
     
     def get_report(self):
-        _report = '\t- CPU:\n\t\t- Model: {}'.format(self.model)
+        _report = '\n\t- CPU:\n\t\t- Model: {}'.format(self.model)
         _report += '\n\t\t- Cores: {}\n\t\t- Threads: {}'.format(
             self.cores,
             self.threads
         )
-        _report += '\n\t\t- Report: {}'.format(self.report)
+        if self.report != '':
+            _report += '\n\t\t- Report: {}'.format(self.report)
         return _report
 
 class GpusInfo(CheckedValue):
@@ -155,10 +162,46 @@ class GpusInfo(CheckedValue):
         return self.result
     
     def get_report(self):
-        _report = '\t- GPUs:'
+        _report = '\n\t- GPUs:'
         for gpu in self.gpus_list:
-            _report += '\n\t\t- Vendor: {} Model: {}'.format(
+            _report += '\n\t\t- Vendor: {} Model: {}\n'.format(
                 gpu['vendor'],
                 gpu['model']
             )
         return _report
+
+class DiskUsage(CheckedValue):
+
+    def __init__(self, disk_usage, fstab):
+        self.disk_usage = disk_usage
+        self.fstab = fstab
+    
+    def check(self):
+        self.result = True
+        return self.result
+    
+    def get_report(self):
+        _report = '\n\t- Partitions:'
+
+        for partition in self.disk_usage.keys():
+            if partition in self.fstab.keys():
+                _report += '\n\t\t"{}":\n'.format(partition)
+                _report += '\t\t\tfilesystem: {}\n'.format(self.fstab[partition]['fstype'])
+                _report += '\t\t\ttotal: {} GB\n'.format(
+                    self.kb_units_to_gb(self.disk_usage[partition]['1K-blocks'])
+                )
+                _report += '\t\t\tavailable: {} GB\n'.format(
+                    self.kb_units_to_gb(self.disk_usage[partition]['available'])
+                )
+            # for info in self.disk_usage[partition].keys():
+            #     _report += '\t\t\t{}: {}\n'.format(
+            #         info,
+            #         self.disk_usage[partition][info]
+            #     )
+        
+        return _report
+
+    def kb_units_to_gb(self, kb_units):
+        _gb_units = float(kb_units) / 1048576
+        _gb_units = float('{0:.3f}'.format(_gb_units))
+        return _gb_units
