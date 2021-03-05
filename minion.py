@@ -13,6 +13,7 @@ class Minion:
         self.disk_usage = {}
 
     def get_info(self):
+        print(self.fstab)
         _report = '"{}":\n'.format(self.minion_id)
         for key in self.info.keys():
             self.results[key] = self.info[key].check()

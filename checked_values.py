@@ -20,18 +20,18 @@ class ContentMountpoint(CheckedValue):
 
 # Ищем маунтпоинт с контентом. Начинаем с /home/telebreeze/media, если его нет, идем выше.
     def get_content_mountpoint(self): 
-        
-        if '/home/telebreeze/media' in self.fstab.keys():
-            return '/home/telebreeze/media'
-             
-        elif '/home/telebreeze/' in self.fstab.keys():
-            return '/home/telebreeze'
+        if type(self.fstab) is dict:
+            if '/home/telebreeze/media' in self.fstab.keys():
+                return '/home/telebreeze/media'
 
-        elif '/home' in self.fstab.keys():
-            return '/home'
-        
-        else:
-            return '/'
+            elif '/home/telebreeze/' in self.fstab.keys():
+                return '/home/telebreeze'
+
+            elif '/home' in self.fstab.keys():
+                return '/home'
+
+            else:
+                return '/'
 
 # Проверяем FS у маунтпоинта с контентом.
     def get_mountpoint_filesystem(self):
@@ -145,7 +145,7 @@ class CpuInfo(CheckedValue):
     
     def get_report(self):
         _report = '\n\t- CPU:\n\t\t- Model: {}'.format(self.model)
-        _report += '\n\t\t- Cores: {}\n\t\t- Threads: {}'.format(
+        _report += '\n\t\t- Cores: {}\n\t\t- Threads: {}\n'.format(
             self.cores,
             self.threads
         )
@@ -193,11 +193,6 @@ class DiskUsage(CheckedValue):
                 _report += '\t\t\tavailable: {} GB\n'.format(
                     self.kb_units_to_gb(self.disk_usage[partition]['available'])
                 )
-            # for info in self.disk_usage[partition].keys():
-            #     _report += '\t\t\t{}: {}\n'.format(
-            #         info,
-            #         self.disk_usage[partition][info]
-            #     )
         
         return _report
 
