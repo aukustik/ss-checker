@@ -127,7 +127,7 @@ class RamTotal(CheckedValue):
         return _report
     
     def ram_mb_to_gb(self, size_mb):
-        _size_gb = float(size_mb) / 1024
+        _size_gb = float(size_mb) / 1000
         _size_gb = float('{0:.3f}'.format(_size_gb))
         return _size_gb
 
@@ -178,7 +178,7 @@ class QSInfo(CheckedValue):
             return self.result
     
     def get_report(self):
-        _report = '\n\t- QuickSync:\n'
+        _report = '\n\n\t- QuickSync:\n'
         if self.result:           
             _report += '\t\t- Intel Quick Sync is available for {}'.format(
                 self.cpu_model
