@@ -12,8 +12,8 @@ class MsChecker:
         self.available_minions = []
         self.available_minions_ids = []
         self.failed_minions_ids = []
-        
-
+        with open('qs_base.txt') as _qs_base:
+            self.qs_base_list = _qs_base.read().splitlines()
     def run(self, minions):
 
         # Проверка активности миньонов
@@ -63,6 +63,7 @@ class MsChecker:
             minion.fstab = _fstab_dict[minion.minion_id]
             minion.disk_usage = _disk_usage[minion.minion_id]
             minion.cpu_info = _cpu_info_dict[minion.minion_id]
+            minion.qs_base_list = self.qs_base_list
             minion.set_info_by_ms_type(self.ms_type)
 
 # Получаем список миньонов из файла

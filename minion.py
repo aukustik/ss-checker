@@ -11,6 +11,7 @@ class Minion:
         self.fstab = None
         self.results = {}
         self.disk_usage = {}
+        self.qs_base_list = []
 
     def get_info(self):
         _report = '"{}":\n'.format(self.minion_id)
@@ -31,7 +32,7 @@ class Minion:
             self.info = {
                 'content_mountpoint': ContentMountpoint(self.fstab),
                 'os': OsRelease(self.grains),
-                'gpus': GpusInfo(self.grains)
+                'gpus': QSInfo(self.cpu_info, self.qs_base_list)
             }
         elif ms_type == 'ms':
             self.info = {
@@ -47,7 +48,7 @@ class Minion:
                 'os': OsRelease(self.grains),
                 'cpu': CpuInfo(self.cpu_info, 4),
                 'ram_total': RamTotal(self.grains),
-                'gpus': GpusInfo(self.grains)
+                'gpus': QSInfo(self.cpu_info, self.qs_base_list)
             }
 
     @property

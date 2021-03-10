@@ -1,3 +1,5 @@
+import re
+
 class CheckedValue:
     def __init__(self):
         self.result = False
@@ -32,12 +34,17 @@ class ContentMountpoint(CheckedValue):
 
             else:
                 return '/'
+        
+        else:
+            return None
 
 # Проверяем FS у маунтпоинта с контентом.
     def get_mountpoint_filesystem(self):
-        
-        _filesystem = self.fstab[self.mountpoint]['fstype']
-        return _filesystem
+        if self.mountpoint != None:
+            _filesystem = self.fstab[self.mountpoint]['fstype']
+            return _filesystem
+        else:
+            return None
 
     def check(self):
 
@@ -153,20 +160,32 @@ class CpuInfo(CheckedValue):
             _report += '\n\t\t- Report: {}'.format(self.report)
         return _report
 
-class GpusInfo(CheckedValue):
-    def __init__(self, grains):
-        self.gpus_list = grains['gpus']
+class QSInfo(CheckedValue):
+    def __init__(self, cpu_info, qs_base):
+        self.cpu_model = cpu_info['model name']
+        _proc_index = re.search(
+            '(i\d+|W|E\d|L)-?[0-9]+\w{1,3}(\sv[0-9]|\s)', self.cpu_model)
+        self.proc_index = _proc_index.group(0).strip()
+        self.qs_base_list = qs_base
+        super(QSInfo, self).__init__()
         
     def check(self):
-        self.result = True
-        return self.result
+        if self.proc_index in self.qs_base_list:
+            self.result = True
+            return self.result
+        else:
+            self.result = False
+            return self.result
     
     def get_report(self):
-        _report = '\n\t- GPUs:'
-        for gpu in self.gpus_list:
-            _report += '\n\t\t- Vendor: {} Model: {}\n'.format(
-                gpu['vendor'],
-                gpu['model']
+        _report = '\n\t- QuickSync:\n'
+        if self.result:           
+            _report += '\t\t- Intel Quick Sync is available for {}'.format(
+                self.cpu_model
+            )
+        else:
+            _report += '\t\t- Intel Quick Sync is unavailable for {}'.format(
+                self.cpu_model
             )
         return _report
 
