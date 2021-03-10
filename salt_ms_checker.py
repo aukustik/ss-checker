@@ -38,7 +38,6 @@ class MsChecker:
             for minion in self.available_minions:
                 _report += minion.get_info()
                 _report += '\n\n'
-            # print(_report)
             self.write_to_report_file(_report)
         else:
             print('No available minions')
