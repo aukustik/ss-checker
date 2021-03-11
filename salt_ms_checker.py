@@ -2,11 +2,13 @@
 from salt import client
 from minion import Minion
 import sys
+import argparse
 
 class MsChecker:
     def __init__(self):
         self.ms_type = ''
         self.input_file = ''
+        self.verbose = False
         self.local_salt = client.LocalClient()
         self.input_list = []
         self.available_minions = []
@@ -14,6 +16,7 @@ class MsChecker:
         self.failed_minions_ids = []
         with open('qs_base.txt') as _qs_base:
             self.qs_base_list = _qs_base.read().splitlines()
+
     def run(self, minions):
 
         # Проверка активности миньонов
@@ -63,6 +66,7 @@ class MsChecker:
             minion.disk_usage = _disk_usage[minion.minion_id]
             minion.cpu_info = _cpu_info_dict[minion.minion_id]
             minion.qs_base_list = self.qs_base_list
+            minion.verbose = self.verbose
             minion.set_info_by_ms_type(self.ms_type)
 
 # Получаем список миньонов из файла
@@ -126,19 +130,21 @@ class MsChecker:
         print('The report was written to a file {}\n'.format(_file_name))
         _report.close()
 
+def prepare_argparser():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('input_file', help='Name of input file with minion ids')
+    parser.add_argument('ms_type', help='Type of Media Server (ms, coder, vod)')
+    parser.add_argument('--verbose', help='Full report with success tests',
+        action="store_true")
+    
+    return parser
+
 if __name__ == '__main__':
     ms_checker = MsChecker()
-    #TODO Переписать аргументы через argparse
-    if '-h' in sys.argv:
-        print('Help:\n Sample:\
-            \n  ./salt_ms_checker.py input_file.txt ms_type')
-        sys.exit()
-    if len(sys.argv) > 2:
-        ms_checker.ms_type = sys.argv[-1]
-        ms_checker.input_file = sys.argv[-2]
-    else:
-        print('Not Enough Args')
-        sys.exit()
+    parser = prepare_argparser()
+    args = parser.parse_args()    
+    ms_checker.ms_type = args.ms_type
+    ms_checker.input_file = args.input_file
+    ms_checker.verbose = args.verbose
 
     ms_checker.run(ms_checker.get_minions_from_file(ms_checker.input_file))
-

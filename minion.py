@@ -12,15 +12,18 @@ class Minion:
         self.results = {} # Результаты проверок bool
         self.disk_usage = {} # Инфо о дисках
         self.qs_base_list = [] # База процессоров с QSync
+        self.verbose = False # Формат репорта
 
     def get_info(self):
         _report = '"{}":\n'.format(self.minion_id)
         for key in self.info.keys():
             self.results[key] = self.info[key].check()
-            if not self.results[key]:
+            if self.verbose:
                 _report += self.info[key].get_report()
-            if self.results[key]: # для дебага
-                _report += self.info[key].get_report()
+            else:
+                if not self.results[key]:                
+                    _report += self.info[key].get_report()
+
         return _report
     
     def get_results(self):
