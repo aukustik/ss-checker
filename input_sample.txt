@@ -1,5 +1,5 @@
 salt_minion_01
-salt_minion_02
+#salt_minion_02
 salt_minion_03
 #salt_minion_my_ms
 salt_minion_centos7.1

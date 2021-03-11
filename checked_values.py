@@ -57,10 +57,16 @@ class ContentMountpoint(CheckedValue):
     
     def get_report(self):
         _report = ''
-        _report += '\n\t- Content mountpoint is "{}" with filesystem {}\n'.format(
-            self.mountpoint,
-            self.filesystem
-        )
+        if self.result:
+            _report += '\n\t- Content mountpoint is "{}" with filesystem {}\n'.format(
+                self.mountpoint,
+                self.filesystem
+            )
+        else:
+            _report += '\n\t- [MUST BE FIXED] Content mountpoint is "{}" with filesystem {}\n'.format(
+                self.mountpoint,
+                self.filesystem
+            )
         return _report
 
 
@@ -77,13 +83,13 @@ class OsRelease(CheckedValue):
 
         if self.distrib != 'CentOS':
             self.result = False
-            self.report += '\n\t\t\tUnsupported Linux distrib.\n'
+            self.report += '\n\t\t\t[MUST BE FIXED] Unsupported Linux distrib.\n'
             return self.result
         
         _release_list = self.release.split('.')
         if _release_list[0] != '7':
             self.result = False
-            self.report += '\n\t\t\tUnsupported CentOS Verison\n'
+            self.report += '\n\t\t\t[MUST BE FIXED] Unsupported CentOS Verison\n'
             return self.result
         
         elif int(_release_list[1]) > 4:
@@ -105,16 +111,16 @@ class OsRelease(CheckedValue):
         return _report
 
 class RamTotal(CheckedValue):
-    def __init__(self, grains):
+    def __init__(self, grains, min_ram):
+        self.min_ram = min_ram
         self.size = grains['mem_total']
         super(RamTotal, self).__init__()
 
 # Проверяем общее количество RAM.
-# Проверку выставил временную.
     def check(self):
-        if int(self.size) < 15000:
+        if int(self.size) < self.min_ram:
             self.result = False
-            self.report += '\n\t\tThere is not enough RAM on the server.\n'
+            self.report += '\n\t\t[MUST BE FIXED] There is not enough RAM on the server.\n'
             return self.result
         
         else:
@@ -157,9 +163,10 @@ class CpuInfo(CheckedValue):
             self.threads
         )
         if self.report != '':
-            _report += '\n\t\t- Report: {}'.format(self.report)
+            _report += '\n\t\t[MUST BE FIXED] {}'.format(self.report)
         return _report
 
+# Проверка процессора на наличие в базе процов с QSync
 class QSInfo(CheckedValue):
     def __init__(self, cpu_info, qs_base):
         self.cpu_model = cpu_info['model name']
@@ -169,7 +176,6 @@ class QSInfo(CheckedValue):
         self.qs_base_list = qs_base
         super(QSInfo, self).__init__()
 
-# Проверка процессора на наличие в базе процов с QSync
     def check(self):
         if self.proc_index in self.qs_base_list:
             self.result = True
@@ -190,6 +196,7 @@ class QSInfo(CheckedValue):
             )
         return _report
 
+# Собираем инфу о свободном месте в партишнах
 class DiskUsage(CheckedValue):
 
     def __init__(self, disk_usage, fstab):

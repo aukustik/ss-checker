@@ -17,11 +17,11 @@ class MsChecker:
         with open('qs_base.txt') as _qs_base:
             self.qs_base_list = _qs_base.read().splitlines()
 
-    def run(self, minions):
-
+    def run(self):
+        _minions = self.get_minions_from_file(self.input_file)
         # Проверка активности миньонов
         print('Waiting for a response from minions...')
-        self.input_list = self.local_salt.cmd(minions, 'test.ping', tgt_type='list', timeout=5)
+        self.input_list = self.local_salt.cmd(_minions, 'test.ping', tgt_type='list', timeout=5)
 
         for minion in self.input_list.keys():
             if self.input_list[minion]:
@@ -147,4 +147,4 @@ if __name__ == '__main__':
     ms_checker.input_file = args.input_file
     ms_checker.verbose = args.verbose
 
-    ms_checker.run(ms_checker.get_minions_from_file(ms_checker.input_file))
+    ms_checker.run()

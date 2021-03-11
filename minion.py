@@ -1,4 +1,5 @@
 from checked_values import *
+import sys
 
 class Minion:
 
@@ -9,7 +10,7 @@ class Minion:
         self.grains = None # Все Grains
         self.cpu_info = None # Информация о ЦПУ
         self.fstab = None # Содержимое fstab
-        self.results = {} # Результаты проверок bool
+        self.results = {} # Результаты проверок
         self.disk_usage = {} # Инфо о дисках
         self.qs_base_list = [] # База процессоров с QSync
         self.verbose = False # Формат репорта
@@ -42,7 +43,7 @@ class Minion:
                 'content_mountpoint': ContentMountpoint(self.fstab),
                 'os': OsRelease(self.grains),
                 'cpu': CpuInfo(self.cpu_info, 1),
-                'ram_total': RamTotal(self.grains)
+                'ram_total': RamTotal(self.grains, 7800)
             }
         elif ms_type == 'coder':
             self.info = {
@@ -50,6 +51,9 @@ class Minion:
                 'content_mountpoint': ContentMountpoint(self.fstab),
                 'os': OsRelease(self.grains),
                 'cpu': CpuInfo(self.cpu_info, 4),
-                'ram_total': RamTotal(self.grains),
+                'ram_total': RamTotal(self.grains, 7800),
                 'gpus': QSInfo(self.cpu_info, self.qs_base_list)
             }
+        else:
+            print('MS type is incorrect, exit...')
+            sys.exit()
