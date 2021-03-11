@@ -168,7 +168,8 @@ class QSInfo(CheckedValue):
         self.proc_index = _proc_index.group(0).strip()
         self.qs_base_list = qs_base
         super(QSInfo, self).__init__()
-        
+
+# Проверка процессора на наличие в базе процов с QSync
     def check(self):
         if self.proc_index in self.qs_base_list:
             self.result = True

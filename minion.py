@@ -4,14 +4,14 @@ class Minion:
 
     def __init__(self, minion_id):
         
-        self.info = {}
-        self.minion_id = minion_id
-        self.grains = None
-        self.cpu_info = None
-        self.fstab = None
-        self.results = {}
-        self.disk_usage = {}
-        self.qs_base_list = []
+        self.info = {} # Параметры для проверки
+        self.minion_id = minion_id # ID Миньона
+        self.grains = None # Все Grains
+        self.cpu_info = None # Информация о ЦПУ
+        self.fstab = None # Содержимое fstab
+        self.results = {} # Результаты проверок bool
+        self.disk_usage = {} # Инфо о дисках
+        self.qs_base_list = [] # База процессоров с QSync
 
     def get_info(self):
         _report = '"{}":\n'.format(self.minion_id)
@@ -50,23 +50,3 @@ class Minion:
                 'ram_total': RamTotal(self.grains),
                 'gpus': QSInfo(self.cpu_info, self.qs_base_list)
             }
-
-    @property
-    def content_mountpoint(self):
-        return self.info['content_mountpoint']
-    
-    @property
-    def os(self):
-        return self.info['os']
-    
-    @property
-    def ram_total(self):
-        return self.info['ram_total']
-    
-    @property
-    def cpu(self):
-        return self.info['cpu']
-
-    @property
-    def gpus(self):
-        return self.info['gpus']
